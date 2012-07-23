@@ -51,15 +51,15 @@ def parse_excel_by_name(filename):
     return result
 
 def parse_excel_by_party(filename):
-    """
+    u"""
     Parse excel files with vote statistics by party.
 
     Assumptions
     ===========
 
     - There is a total of six parties (see parties_count above)
-    - For each session, there is a line containing either 'ГЛАСУВАНЕ' or
-    'РЕГИСТРАЦИЯ', and that's how we know what's going on
+    - For each session, there is a line containing either "GLASUVANE" or
+    "REGISTRACIA", and that's how we know what's going on
     - After this line, there are two lines we don't care about, and the next
     parties_count consecutive lines contain the vote/presence statistics by party.
 
@@ -74,8 +74,8 @@ def parse_excel_by_party(filename):
                     key: party
                     value:
                         dictionary:
-                            key: present/expected for 'РЕГИСТРАЦИЯ', or
-                                 for/against/skipped/total for 'ГЛАСУВАНЕ'
+                            key: present/expected for 'REGISTRACIA', or
+                                 for/against/skipped/total for 'GLASUVANE'
                             value: corresponding numbers in int format
 
     """
