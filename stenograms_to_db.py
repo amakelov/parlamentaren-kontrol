@@ -2,6 +2,7 @@ from HTMLParser import HTMLParser
 from urllib2 import urlopen
 from collections import namedtuple
 from parse_excel import *
+from collections import OrderedDict
 import shelve
 import xlrd
 
@@ -157,7 +158,7 @@ def parse_excel_by_party(filename):
     sheet = book.sheet_by_index(0)
     cols = sheet.ncols
     rows = sheet.nrows
-    result = {}
+    result = OrderedDict()
     row = 0
     while row < rows:
         first = sheet.cell_value(rowx=row, colx=0)
@@ -189,8 +190,6 @@ def parse_excel_by_party(filename):
                 total = int(sheet.cell_value(rowx=row, colx=4))
                 value[party] = vote_stats(yes=yes, no=no, abstained=abstained, total=total)
             result[key] = value
-        else:
-            raise ValueError('Unexpected session type')
         row += 1
     return result
 
