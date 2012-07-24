@@ -4,6 +4,8 @@ from collections import namedtuple
 from parse_excel import *
 import shelve
 import xlrd
+
+
 class StenogramsHTMLParser(HTMLParser):
 
     def __init__(self):
@@ -73,6 +75,8 @@ if __name__ == '__main__':
 
 rep = namedtuple('rep', ['name', 'party'])
 session = namedtuple('session', ['kind', 'details'])
+reg_stats = namedtuple('reg_stats', ['present', 'expected'])
+vote_stats = namedtuple('vote_stats', ['yes', 'no', 'abstained', 'total'])
 
 registration = u'\u0420\u0415\u0413\u0418\u0421\u0422\u0420\u0410\u0426\u0418\u042f'
 vote = u'\u0413\u041b\u0410\u0421\u0423\u0412\u0410\u041d\u0415'
@@ -168,9 +172,9 @@ def parse_excel_by_party(filename):
                 party = sheet.cell_value(rowx=row, colx=0).strip().upper()
                 present = int(sheet.cell_value(rowx=row, colx=1))
                 expected = int(sheet.cell_value(rowx=row, colx=2))
-                value[party] = {'present': present, 'expected': expected}
+                value[party] = reg_stats(present=present, expected=expected)
             result[key] = value
-        if first.find(vote) != -1:
+        elif first.find(vote) != -1:
             kind = vote
             details = first
             key = session(kind=kind, details=details)
@@ -179,12 +183,14 @@ def parse_excel_by_party(filename):
             for i in range(parties_count):
                 row += 1
                 party = sheet.cell_value(rowx=row, colx=0).strip().upper()
-                voted_for = int(sheet.cell_value(rowx=row, colx=1))
-                voted_against = int(sheet.cell_value(rowx=row, colx=2))
-                skipped = int(sheet.cell_value(rowx=row, colx=3))
+                yes = int(sheet.cell_value(rowx=row, colx=1))
+                no = int(sheet.cell_value(rowx=row, colx=2))
+                abstained = int(sheet.cell_value(rowx=row, colx=3))
                 total = int(sheet.cell_value(rowx=row, colx=4))
-                value[party] = {'for': voted_for, 'against': voted_against, 'skipped': skipped, 'total': total}
+                value[party] = vote_stats(yes=yes, no=no, abstained=abstained, total=total)
             result[key] = value
+        else:
+            raise ValueError('Unexpected session type')
         row += 1
     return result
 
